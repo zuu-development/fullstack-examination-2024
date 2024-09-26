@@ -1,6 +1,4 @@
-/*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
-*/
+// Package cmd provides the command line interface for the application.
 package cmd
 
 import (
@@ -14,7 +12,7 @@ import (
 var migrateCmd = &cobra.Command{
 	Use:   "migrate",
 	Short: "Migrate the database",
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		dbInstance, err := db.New(cfg.SQLite.DBFilename)
 		if err != nil {
 			fmt.Println("Error connecting to database")

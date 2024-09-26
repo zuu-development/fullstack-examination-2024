@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// Register registers the routes for the application.
 func Register(e *echo.Echo, db *gorm.DB) {
-
 	healthHandler := NewHealth()
 	e.GET("/healthz", healthHandler.Healthz)
 

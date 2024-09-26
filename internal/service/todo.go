@@ -1,3 +1,4 @@
+// Package service provides the business logic for the todo endpoint.
 package service
 
 import (
@@ -5,6 +6,7 @@ import (
 	"github.com/zuu-development/fullstack-examination-2024/internal/repository"
 )
 
+// Todo is the service for the todo endpoint.
 type Todo interface {
 	Create(task string) error
 	Update(id int, task string, status model.TaskStatus) error
@@ -12,13 +14,16 @@ type Todo interface {
 	Find(id int) (*model.Todo, error)
 	FindAll() ([]*model.Todo, error)
 }
+
 type todo struct {
 	todoRepository repository.Todo
 }
 
+// NewTodo creates a new Todo service.
 func NewTodo(r repository.Todo) Todo {
 	return &todo{r}
 }
+
 func (t *todo) Create(task string) error {
 	todo := model.NewTodo(task)
 	if err := t.todoRepository.Create(todo); err != nil {
@@ -34,6 +39,7 @@ func (t *todo) Update(id int, task string, status model.TaskStatus) error {
 	}
 	return nil
 }
+
 func (t *todo) Delete(id int) error {
 	if err := t.todoRepository.Delete(id); err != nil {
 		return err

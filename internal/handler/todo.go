@@ -8,6 +8,7 @@ import (
 	"github.com/zuu-development/fullstack-examination-2024/internal/service"
 )
 
+// TodoHandler is the request handler for the todo endpoint.
 type TodoHandler interface {
 	Create(c echo.Context) error
 	Update(c echo.Context) error
@@ -21,6 +22,7 @@ type todoHandler struct {
 	service service.Todo
 }
 
+// NewTodo returns a new instance of the todo handler.
 func NewTodo(s service.Todo) TodoHandler {
 	return &todoHandler{service: s}
 }
@@ -43,6 +45,7 @@ func (t *todoHandler) Create(c echo.Context) error {
 	return c.JSON(http.StatusCreated, nil)
 }
 
+// UpdateRequest is the request parameter for updating a todo
 type UpdateRequest struct {
 	ID     int              `json:"id" validate:"required"`
 	Task   string           `json:"task" validate:"required"`
@@ -62,6 +65,7 @@ func (t *todoHandler) Update(c echo.Context) error {
 	return c.JSON(http.StatusNoContent, nil)
 }
 
+// DeleteRequest is the request parameter for deleting a todo
 type DeleteRequest struct {
 	ID int `json:"id" validate:"required"`
 }
@@ -77,6 +81,7 @@ func (t *todoHandler) Delete(c echo.Context) error {
 	return c.JSON(http.StatusNoContent, nil)
 }
 
+// FindRequest is the request parameter for finding a todo
 type FindRequest struct {
 	ID int `json:"id" validate:"required"`
 }
