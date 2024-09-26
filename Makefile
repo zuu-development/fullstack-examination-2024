@@ -33,3 +33,11 @@ cli-local:
 .PHONY: serve
 serve:
 	air -c .air.toml
+
+.PHONY: lint
+lint:
+	golangci-lint run
+
+.PHONY: lint-fix
+lint-fix:
+	golangci-lint run --fix

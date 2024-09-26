@@ -10,8 +10,10 @@ import (
 	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 )
 
-var cfgFile string
-var cfg model.Config
+var (
+	cfgFile string
+	cfg     model.Config
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{

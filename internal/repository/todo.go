@@ -1,3 +1,4 @@
+// Package repository provides the database operations for the todo endpoint.
 package repository
 
 import (
@@ -5,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Todo is the repository for the todo endpoint.
 type Todo interface {
 	Create(t *model.Todo) error
 	Delete(id int) error
@@ -17,6 +19,7 @@ type todo struct {
 	db *gorm.DB
 }
 
+// NewTodo returns a new instance of the todo repository.
 func NewTodo(db *gorm.DB) Todo {
 	return &todo{
 		db: db,
@@ -55,6 +58,7 @@ func (td *todo) Find(id int) (*model.Todo, error) {
 	}
 	return todo, nil
 }
+
 func (td *todo) FindAll() ([]*model.Todo, error) {
 	var todos []*model.Todo
 	err := td.db.Find(&todos).Error

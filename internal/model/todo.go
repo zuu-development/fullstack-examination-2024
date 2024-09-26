@@ -2,6 +2,7 @@ package model
 
 import "time"
 
+// Todo is the model for the todo endpoint.
 type Todo struct {
 	ID        int `gorm:"primaryKey"`
 	Task      string
@@ -10,12 +11,15 @@ type Todo struct {
 	UpdatedAt time.Time `gorm:"<-:false"`
 }
 
+// NewTodo returns a new instance of the todo model.
 func NewTodo(task string) *Todo {
 	return &Todo{
 		Task:   task,
 		Status: Created,
 	}
 }
+
+// NewUpdateTodo returns a new instance of the todo model for updating.
 func NewUpdateTodo(id int, task string, status TaskStatus) *Todo {
 	return &Todo{
 		ID:     id,
@@ -24,14 +28,19 @@ func NewUpdateTodo(id int, task string, status TaskStatus) *Todo {
 	}
 }
 
+// TaskStatus is the status of the task.
 type TaskStatus string
 
 const (
-	Created    = TaskStatus("created")
+	// Created is the status for a created task.
+	Created = TaskStatus("created")
+	// Processing is the status for a processing task.
 	Processing = TaskStatus("processing")
-	Done       = TaskStatus("done")
+	// Done is the status for a done task.
+	Done = TaskStatus("done")
 )
 
+// TaskStatusMap is a map of task status.
 var TaskStatusMap = map[TaskStatus]bool{
 	Created:    true,
 	Processing: true,

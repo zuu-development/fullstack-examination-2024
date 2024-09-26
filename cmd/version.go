@@ -14,9 +14,7 @@ func init() {
 
 // NewVersionCmd returns a new `version` command to be used as a sub-command to root
 func NewVersionCmd() *cobra.Command {
-	var (
-		output string
-	)
+	var output string
 
 	versionCmd := cobra.Command{
 		Use:   "version",
@@ -24,7 +22,7 @@ func NewVersionCmd() *cobra.Command {
 		Example: `  # Print the full version of client and server to stdout
   todo-cli version
 `,
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(cmd *cobra.Command, _ []string) {
 			cv := common.GetVersion()
 			switch output {
 			case "wide", "short", "":

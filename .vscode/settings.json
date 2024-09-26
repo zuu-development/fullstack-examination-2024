@@ -1,0 +1,7 @@
+{
+  "go.coverOnSingleTest": true,
+  "go.coverOnSingleTestFile": true,
+  "go.disableConcurrentTests": true,
+  "go.lintTool": "golangci-lint",
+  "go.lintFlags": ["--config=${workspaceFolder}/.golangci.yaml", "--fast","-v"],
+}

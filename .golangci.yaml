@@ -1,0 +1,45 @@
+linters:
+  enable:
+    - bodyclose
+    - dupl
+    - errcheck
+    - gci
+    - gocritic
+    - gocyclo
+    - gofmt
+    - gofumpt
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - prealloc
+    - revive
+    - staticcheck
+    - testifylint
+    - typecheck
+    - unconvert
+    - unused
+    - usestdlibvars
+
+  enable-all: false
+  disable-all: true
+  fast: false
+
+issues:
+  include:
+    - EXC0012
+    - EXC0013
+    - EXC0014
+    - EXC0015
+  exclude-rules:
+    - path: _test.go
+      linters:
+        - dupl
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+run:
+  timeout: 5m
+  build-tags:
+    - integration
