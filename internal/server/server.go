@@ -1,3 +1,4 @@
+// Package server provides the API server for the application.
 package server
 
 import (
@@ -6,12 +7,11 @@ import (
 
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
-	"gorm.io/gorm"
-
 	"github.com/zuu-development/fullstack-examination-2024/internal/common"
 	"github.com/zuu-development/fullstack-examination-2024/internal/db"
 	"github.com/zuu-development/fullstack-examination-2024/internal/handler"
 	"github.com/zuu-development/fullstack-examination-2024/internal/model"
+	"gorm.io/gorm"
 )
 
 // TodoServer is the API server for Todo
@@ -20,18 +20,16 @@ type TodoServer struct {
 	engine *echo.Echo
 	log    *log.Entry
 	db     *gorm.DB
-
-	// stopCh is the channel which when closed, will shutdown the Todo server
-	stopCh chan struct{}
 }
 
+// TodoServerOpts is the options for the TodoServer
 type TodoServerOpts struct {
 	ListenPort int
 	Config     model.Config
 }
 
 // NewServer returns a new instance of the Todo API server
-func NewServer(ctx context.Context, opts TodoServerOpts) *TodoServer {
+func NewServer(opts TodoServerOpts) *TodoServer {
 	logger := log.NewEntry(log.StandardLogger())
 
 	dbInstance, err := db.New(opts.Config.SQLite.DBFilename)
@@ -50,30 +48,14 @@ func NewServer(ctx context.Context, opts TodoServerOpts) *TodoServer {
 	return s
 }
 
-// TODO ctx is not used
-func (s *TodoServer) Run(ctx context.Context) {
-
-	go func() { s.checkServeErr("api", s.engine.Start(fmt.Sprintf(":%d", s.port))) }()
-
-	// Start the muxed listeners for our servers
-	log.Infof("todo %s serving on port %d",
-		common.GetVersion(), s.port)
-
-	s.stopCh = make(chan struct{})
-	<-s.stopCh
-
+// Run starts the Todo API server
+func (s *TodoServer) Run() error {
+	log.Infof("todo %s serving on port %d", common.GetVersion(), s.port)
+	return s.engine.Start(fmt.Sprintf(":%d", s.port))
 }
 
-// checkServeErr checks the error from a .Serve() call to decide if it was a graceful shutdown
-func (s *TodoServer) checkServeErr(name string, err error) {
-	if err != nil {
-		if s.stopCh == nil {
-			// a nil stopCh indicates a graceful shutdown
-			log.Infof("graceful shutdown %s: %v", name, err)
-		} else {
-			log.Fatalf("%s: %v", name, err)
-		}
-	} else {
-		log.Infof("graceful shutdown %s", name)
-	}
+// Shutdown stops the Todo API server
+func (s *TodoServer) Shutdown(ctx context.Context) error {
+	log.Infof("shuting down todo %s serving on port %d", common.GetVersion(), s.port)
+	return s.engine.Shutdown(ctx)
 }
