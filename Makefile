@@ -30,8 +30,8 @@ cli:
 cli-local:
 	GODEBUG="tarinsecurepath=0,zipinsecurepath=0" go build -gcflags="all=-N -l" $(COVERAGE_FLAG) -v -ldflags '${LDFLAGS}' -o ${DIST_DIR}/${CLI_NAME} ./
 
-.PHONY: serve-api
-serve-api:
+.PHONY: serve-backend
+serve-backend:
 	air -c .air.toml
 
 .PHONY: serve-ui
@@ -48,3 +48,7 @@ lint-fix:
 
 dep-ui-local:
 	cd ui && yarn install
+
+.PHONY: test-backend
+test-backend:
+	gotestsum --format=testname --rerun-fails

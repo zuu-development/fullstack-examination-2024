@@ -17,6 +17,7 @@
     "labstack",
     "logrus",
     "sirupsen",
+    "stretchr",
     "todos"
   ]
 }

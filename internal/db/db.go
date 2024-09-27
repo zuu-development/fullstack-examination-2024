@@ -14,3 +14,12 @@ func New(filename string) (*gorm.DB, error) {
 	}
 	return db, nil
 }
+
+// NewMemory creates a new in-memory database connection
+func NewMemory() (*gorm.DB, error) {
+	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+	return db, nil
+}
