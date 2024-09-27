@@ -2,6 +2,8 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -11,10 +13,10 @@ type Handler struct{}
 // MustBind はリクエストのバインドとバリデーションを行います。
 func (h Handler) MustBind(c echo.Context, req interface{}) error {
 	if err := c.Bind(req); err != nil {
-		return err
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
-	if err := validateStruct(req); err != nil {
-		return err
+	if err := c.Validate(req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return nil
 }

@@ -3,5 +3,20 @@
   "go.coverOnSingleTestFile": true,
   "go.disableConcurrentTests": true,
   "go.lintTool": "golangci-lint",
-  "go.lintFlags": ["--config=${workspaceFolder}/.golangci.yaml", "--fast","-v"],
+  "go.lintFlags": [
+    "--config=${workspaceFolder}/.golangci.yaml",
+    "--fast",
+    "-v"
+  ],
+  "eslint.options": {
+    "overrideConfigFile": "${workspaceFolder}/ui/eslint.config.mjs"
+  },
+  "cSpell.words": [
+    "gorm",
+    "Healthz",
+    "labstack",
+    "logrus",
+    "sirupsen",
+    "todos"
+  ]
 }

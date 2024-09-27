@@ -28,10 +28,10 @@ func CheckError(err error) {
 }
 
 // Fatal is a wrapper for logrus.Fatal() to exit with custom code
-func Fatal(exitcode int, args ...interface{}) {
-	exitfunc := func() {
-		os.Exit(exitcode)
+func Fatal(exitCode int, args ...interface{}) {
+	exitFunc := func() {
+		os.Exit(exitCode)
 	}
-	log.RegisterExitHandler(exitfunc)
+	log.RegisterExitHandler(exitFunc)
 	log.Fatal(args...)
 }

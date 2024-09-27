@@ -4,8 +4,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-var validate = validator.New()
+// CustomValidator is a custom validator for the echo framework
+type CustomValidator struct {
+	validator *validator.Validate
+}
 
-func validateStruct(s interface{}) error {
-	return validate.Struct(s)
+// Validate validates the input struct
+func (cv *CustomValidator) Validate(i interface{}) error {
+	if err := cv.validator.Struct(i); err != nil {
+		return err
+	}
+	return nil
 }

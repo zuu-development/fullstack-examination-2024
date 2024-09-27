@@ -2,6 +2,7 @@
 package repository
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 	"gorm.io/gorm"
 )
@@ -44,6 +45,7 @@ func (td *todo) Delete(id int) error {
 	if err := td.db.Where("id = ?", id).Delete(&model.Todo{}).Error; err != nil {
 		return err
 	}
+	log.Info("Deleted todo with id: ", id)
 	return nil
 }
 
