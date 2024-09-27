@@ -8,8 +8,8 @@ import (
 
 // Todo is the service for the todo endpoint.
 type Todo interface {
-	Create(task string) error
-	Update(id int, task string, status model.TaskStatus) error
+	Create(task string) (*model.Todo, error)
+	Update(id int, task string, status model.Status) (*model.Todo, error)
 	Delete(id int) error
 	Find(id int) (*model.Todo, error)
 	FindAll() ([]*model.Todo, error)
@@ -24,20 +24,33 @@ func NewTodo(r repository.Todo) Todo {
 	return &todo{r}
 }
 
-func (t *todo) Create(task string) error {
+func (t *todo) Create(task string) (*model.Todo, error) {
 	todo := model.NewTodo(task)
 	if err := t.todoRepository.Create(todo); err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return todo, nil
 }
 
-func (t *todo) Update(id int, task string, status model.TaskStatus) error {
+func (t *todo) Update(id int, task string, status model.Status) (*model.Todo, error) {
 	todo := model.NewUpdateTodo(id, task, status)
-	if err := t.todoRepository.Update(todo); err != nil {
-		return err
+	// 現在のユーザー情報を取得
+	currentTodo, err := t.Find(id)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+
+	// 空文字列の場合、現在の値を使用
+	if todo.Task == "" {
+		todo.Task = currentTodo.Task
+	}
+	if todo.Status == "" {
+		todo.Status = currentTodo.Status
+	}
+	if err := t.todoRepository.Update(todo); err != nil {
+		return nil, err
+	}
+	return todo, nil
 }
 
 func (t *todo) Delete(id int) error {
