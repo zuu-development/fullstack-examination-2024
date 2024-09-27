@@ -19,6 +19,11 @@ func NewHealth() HealthHandler {
 	return &healthHandler{}
 }
 
+// @Summary	Health check
+// @Tags		health
+// @Produce	json
+// @Success	200	{object}	ResponseData{data=time.Time}
+// @Router		/healthz [get]
 func (t *healthHandler) Healthz(c echo.Context) error {
-	return c.JSON(http.StatusOK, time.Now())
+	return c.JSON(http.StatusOK, ResponseData{Data: time.Now()})
 }

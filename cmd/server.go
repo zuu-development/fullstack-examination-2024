@@ -25,20 +25,34 @@ func NewServerCmd() *cobra.Command {
   todo-cli server
 `,
 		Run: func(_ *cobra.Command, _ []string) {
-			opts := server.TodoServerOpts{
-				ListenPort: cfg.Server.Port,
+			var servers []server.Server
+
+			apiOpts := server.TodoAPIServerOpts{
+				ListenPort: cfg.APIServer.Port,
 				Config:     cfg,
 			}
-			server := server.NewServer(opts)
+			apiServer := server.NewAPI(apiOpts)
+			servers = append(servers, apiServer)
+
+			if cfg.SwaggerServer.Enable {
+				SwaggerOpts := server.SwaggerServerOpts{
+					ListenPort: cfg.SwaggerServer.Port,
+				}
+				swagServer := server.NewSwagger(SwaggerOpts)
+				servers = append(servers, swagServer)
+			}
 
 			ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 			defer stop()
 
-			go func() {
-				if err := server.Run(); err != nil && err != http.ErrServerClosed {
-					log.Fatal("shutting down the server")
-				}
-			}()
+			for _, s := range servers {
+				server := s
+				go func() {
+					if err := server.Run(); err != nil && err != http.ErrServerClosed {
+						log.Fatal("shutting down ", server.Name(), " err: ", err)
+					}
+				}()
+			}
 
 			log.Info("server started")
 			// Wait for interrupt signal to gracefully shutdown the server with a timeout of 10 seconds.
@@ -46,8 +60,11 @@ func NewServerCmd() *cobra.Command {
 			log.Info("server shutting down")
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
-			if err := server.Shutdown(ctx); err != nil {
-				log.Fatal(err)
+
+			for _, s := range servers {
+				if err := s.Shutdown(ctx); err != nil {
+					log.Fatal(err)
+				}
 			}
 			log.Info("server shutdown gracefully")
 		},
