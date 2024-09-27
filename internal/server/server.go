@@ -45,7 +45,7 @@ func NewServer(opts TodoServerOpts) *TodoServer {
 
 	handler.Register(engine, dbInstance)
 	engine.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: []string{opts.Config.UI.URL},
 		AllowMethods: []string{echo.GET, echo.POST, echo.PUT, echo.DELETE},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 	}))

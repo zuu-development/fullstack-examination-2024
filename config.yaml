@@ -1,3 +1,5 @@
+ui:
+  url: http://localhost:3000
 server:
   port: 8080
 sqLite:

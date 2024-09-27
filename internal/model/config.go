@@ -3,8 +3,14 @@ package model
 
 // Config is the configuration for the application.
 type Config struct {
+	UI     UI
 	Server Server
 	SQLite SQLite
+}
+
+// UI is the configuration for the UI.
+type UI struct {
+	URL string
 }
 
 // Server is the configuration for the server.

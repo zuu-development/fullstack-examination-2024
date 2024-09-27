@@ -41,7 +41,7 @@ export default {
   methods: {
     async fetchTodos() {
       try {
-        const response = await fetch(`http://localhost:8080/api/todos`, {
+        const response = await fetch(`/api/todos`, {
         });
         if (!response.ok) throw new Error(`Failed to get todo list. statusCode: ${response.status}`);
         response.json().then(data => {
@@ -56,7 +56,7 @@ export default {
       if (this.newTask.trim() === '') return;
 
       try {
-        const response = await fetch('http://localhost:8080/api/todos', {
+        const response = await fetch('/api/todos', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export default {
       todo.isEditing = false;
 
       try {
-        const response = await fetch(`http://localhost:8080/api/todos/${todo.ID}`, {
+        const response = await fetch(`/api/todos/${todo.ID}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ export default {
     },
     async updateStatus(todo) {
       try {
-        const response = await fetch(`http://localhost:8080/api/todos/${todo.ID}`, {
+        const response = await fetch(`/api/todos/${todo.ID}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export default {
     },
     async deleteTodo(id) {
       try {
-        const response = await fetch(`http://localhost:8080/api/todos/${id}`, {
+        const response = await fetch(`/api/todos/${id}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
