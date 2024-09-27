@@ -34,12 +34,11 @@ func (t *todo) Create(task string) (*model.Todo, error) {
 
 func (t *todo) Update(id int, task string, status model.Status) (*model.Todo, error) {
 	todo := model.NewUpdateTodo(id, task, status)
-	// 現在のユーザー情報を取得
+	// 現在の値を取得
 	currentTodo, err := t.Find(id)
 	if err != nil {
 		return nil, err
 	}
-
 	// 空文字列の場合、現在の値を使用
 	if todo.Task == "" {
 		todo.Task = currentTodo.Task

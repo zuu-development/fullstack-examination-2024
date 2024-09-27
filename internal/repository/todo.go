@@ -42,8 +42,12 @@ func (td *todo) Update(t *model.Todo) error {
 }
 
 func (td *todo) Delete(id int) error {
-	if err := td.db.Where("id = ?", id).Delete(&model.Todo{}).Error; err != nil {
-		return err
+	result := td.db.Where("id = ?", id).Delete(&model.Todo{})
+	if result.RowsAffected == 0 {
+		return model.ErrNotFound
+	}
+	if result.Error != nil {
+		return result.Error
 	}
 	log.Info("Deleted todo with id: ", id)
 	return nil
@@ -54,7 +58,7 @@ func (td *todo) Find(id int) (*model.Todo, error) {
 	err := td.db.Where("id = ?", id).Take(&todo).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return nil, nil
+			return nil, model.ErrNotFound
 		}
 		return nil, err
 	}

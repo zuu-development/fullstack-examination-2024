@@ -35,7 +35,7 @@ type CreateRequest struct {
 func (t *todoHandler) Create(c echo.Context) error {
 	var req CreateRequest
 	if err := t.MustBind(c, &req); err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, Response{Error: err})
 	}
 
 	todo, err := t.service.Create(req.Task)
@@ -61,10 +61,13 @@ func (t *todoHandler) Update(c echo.Context) error {
 
 	todo, err := t.service.Update(req.ID, req.Task, req.Status)
 	if err != nil {
+		if err == model.ErrNotFound {
+			return c.JSON(http.StatusNotFound, Response{Error: "todo not found"})
+		}
 		return c.JSON(http.StatusInternalServerError, Response{Error: err})
 	}
 
-	return c.JSON(http.StatusNoContent, Response{Data: todo})
+	return c.JSON(http.StatusOK, Response{Data: todo})
 }
 
 // DeleteRequest is the request parameter for deleting a todo
@@ -78,9 +81,12 @@ func (t *todoHandler) Delete(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, Response{Error: err})
 	}
 	if err := t.service.Delete(req.ID); err != nil {
+		if err == model.ErrNotFound {
+			return c.JSON(http.StatusNotFound, Response{Error: "todo not found"})
+		}
 		return c.JSON(http.StatusInternalServerError, Response{Error: err})
 	}
-	return c.JSON(http.StatusNoContent, Response{})
+	return c.NoContent(http.StatusNoContent)
 }
 
 // FindRequest is the request parameter for finding a todo
@@ -95,6 +101,9 @@ func (t *todoHandler) Find(c echo.Context) error {
 	}
 	res, err := t.service.Find(req.ID)
 	if err != nil {
+		if err == model.ErrNotFound {
+			return c.JSON(http.StatusNotFound, Response{Error: "todo not found"})
+		}
 		return c.JSON(http.StatusInternalServerError, Response{Error: err})
 	}
 	return c.JSON(http.StatusOK, Response{Data: res})
