@@ -12,11 +12,13 @@ import (
 func Register(e *echo.Echo, db *gorm.DB) {
 	e.Validator = &CustomValidator{validator: validator.New()}
 
+	api := e.Group("/api/v1")
+
+	// Health check
 	healthHandler := NewHealth()
-	e.GET("/healthz", healthHandler.Healthz)
+	api.GET("/healthz", healthHandler.Healthz)
 
-	api := e.Group("/api")
-
+	// Todo
 	repository := repository.NewTodo(db)
 	service := service.NewTodo(repository)
 	todoHandler := NewTodo(service)

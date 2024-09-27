@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/go-playground/validator/v10"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -60,8 +61,18 @@ func initConfig() {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 
+	cfg = model.Config{
+		APIServer:     model.Server{Enable: true, Port: 8080},
+		SwaggerServer: model.Server{Enable: false, Port: 1314},
+	}
+
 	err := viper.Unmarshal(&cfg)
 	if err != nil {
 		log.Fatalf("unable to decode into struct, %v", err)
+	}
+
+	validate := validator.New()
+	if err := validate.Struct(&cfg); err != nil {
+		log.Fatalf("config validation failed: %v", err)
 	}
 }

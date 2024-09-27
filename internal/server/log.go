@@ -9,6 +9,7 @@ import (
 func writeRequestLogJSON(_ echo.Context, v middleware.RequestLoggerValues) error {
 	log.WithFields(log.Fields{
 		"method":         v.Method,
+		"host":           v.Host,
 		"path":           v.URIPath,
 		"remote_ip":      v.RemoteIP,
 		"user_agent":     v.UserAgent,
@@ -25,6 +26,7 @@ func requestLogger() echo.MiddlewareFunc {
 	return middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
 		LogValuesFunc:    writeRequestLogJSON,
 		LogMethod:        true,
+		LogHost:          true,
 		LogURIPath:       true,
 		LogRemoteIP:      true,
 		LogUserAgent:     true,

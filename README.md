@@ -17,6 +17,7 @@ asdf plugin add air
 asdf plugin add golang
 asdf plugin add gotestsum
 asdf plugin add nodejs
+asdf plugin add swag
 ```
 
 ### Install asdf versions

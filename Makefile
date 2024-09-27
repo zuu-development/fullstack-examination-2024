@@ -46,9 +46,24 @@ lint:
 lint-fix:
 	golangci-lint run --fix
 
+.PHONY: dep-ui-local
 dep-ui-local:
 	cd ui && yarn install
 
 .PHONY: test-backend
 test-backend:
 	gotestsum --format=testname --rerun-fails
+
+.PHONY: swag-fmt
+swag-fmt:
+	swag fmt
+
+
+# ビルド時にチェックする .go ファイル
+SWAG_GO_FILES:=$(shell find internal/handler -type f -name '*.go' -print)
+
+docs/swagger.yaml: main.go $(SWAG_GO_FILES)
+	swag init
+
+docs/swagger.html: docs/swagger.yaml
+	npx @redocly/cli@1.25.3 build-docs -o docs/swagger.html docs/swagger.yaml
