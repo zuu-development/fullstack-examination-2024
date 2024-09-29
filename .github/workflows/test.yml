@@ -1,0 +1,43 @@
+name: Backend CI test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.19.13'
+
+    - name: Setup gotestsum
+      run: |
+        gotestsum_version=1.12.0
+
+        OS=$(go env GOOS)
+        ARCH=$(go env GOARCH)
+
+        export TARGET_FILE=gotestsum_${gotestsum_version}_${OS}_${ARCH}.tar.gz
+        temp_path="/tmp/${TARGET_FILE}"
+        url=https://github.com/gotestyourself/gotestsum/releases/download/v${gotestsum_version}/gotestsum_${gotestsum_version}_${OS}_${ARCH}.tar.gz
+        [ -e ${temp_path} ] || curl -sLf --retry 3 -o ${temp_path} ${url}
+
+        mkdir -p /tmp/gotestsum-${gotestsum_version}
+        tar -xvzf ${temp_path} -C /tmp/gotestsum-${gotestsum_version}
+        cp /tmp/gotestsum-${gotestsum_version}/gotestsum /usr/local/bin/gotestsum
+        chmod +x /usr/local/bin/gotestsum
+        gotestsum --version
+
+    - name: Run tests
+      run: make test-backend-ci
+
+    - name: create report
+      uses: k1LoW/octocov-action@v1
