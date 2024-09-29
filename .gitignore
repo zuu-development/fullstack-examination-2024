@@ -4,7 +4,6 @@
 .nuxt
 .nitro
 .cache
-dist
 
 # Node dependencies
 node_modules
@@ -26,5 +25,7 @@ logs
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-.vscode
+.vscode/
 tmp
+
+dist/*

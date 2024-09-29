@@ -1,0 +1,73 @@
+version: 2
+
+project_name: todo
+
+before:
+  hooks:
+    - go mod download
+    - go mod tidy
+    - go vet
+    - go fmt
+
+builds:
+  - id: todo-cli
+    binary: todo-{{ .Os }}-{{ .Arch }}
+    flags:
+      - -v
+    ldflags:
+      - -X github.com/zuu-development/fullstack-examination-2024/internal/common.version={{ .Version }}
+      - -X github.com/zuu-development/fullstack-examination-2024/internal/common.buildDate={{ .Date }}
+      - -X github.com/zuu-development/fullstack-examination-2024/internal/common.gitCommit={{ .FullCommit }}
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - id: todo-archive
+    builds:
+    - todo-cli
+    name_template: |-
+      {{ .ProjectName }}-{{ .Os }}-{{ .Arch }}
+    format: binary
+
+checksum:
+  name_template: 'cli_checksums.txt'
+  algorithm: sha256
+
+release:
+  prerelease: auto
+  draft: false
+  footer: |
+    **Full Changelog**: https://github.com/zuu-development/fullstack-examination-2024/compare/{{ .PreviousTag }}...{{ .Tag }}
+
+changelog:
+  use:
+    github
+  sort: asc
+  abbrev: 0
+  groups: # Regex use RE2 syntax as defined here: https://github.com/google/re2/wiki/Syntax.
+    - title: 'Features'
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 100
+    - title: 'Bug fixes'
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 200
+    - title: 'Documentation'
+      regexp: '^.*?docs(\([[:word:]]+\))??!?:.+$'
+      order: 300
+    - title: 'Dependency updates'
+      regexp: '^.*?(feat|fix|chore)\(deps?.+\)!?:.+$'
+      order: 400
+    - title: 'Other work'
+      order: 999
+  filters:
+    exclude:
+      - '^test:'
+      - '^.*?Bump(\([[:word:]]+\))?.+$'
+      - '^.*?\[Bot\](\([[:word:]]+\))?.+$'
+
+
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
