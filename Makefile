@@ -1,4 +1,4 @@
-CMD_PACKAGE=github.com/zuu-development/fullstack-examination-2024/cmd
+COMMON_PACKAGE=github.com/zuu-development/fullstack-examination-2024/internal/common
 CURRENT_DIR=$(shell pwd)
 DIST_DIR=${CURRENT_DIR}/dist
 CLI_NAME=todo-cli
@@ -18,9 +18,9 @@ COVERAGE_FLAG=
 endif
 
 override LDFLAGS += \
-  -X ${CMD_PACKAGE}.version=${VERSION} \
-  -X ${CMD_PACKAGE}.buildDate=${BUILD_DATE} \
-  -X ${CMD_PACKAGE}.gitCommit=${GIT_COMMIT} \
+  -X ${COMMON_PACKAGE}.version=${VERSION} \
+  -X ${COMMON_PACKAGE}.buildDate=${BUILD_DATE} \
+  -X ${COMMON_PACKAGE}.gitCommit=${GIT_COMMIT} \
 
 .PHONY: cli
 cli:
@@ -29,6 +29,10 @@ cli:
 .PHONY: cli-local
 cli-local:
 	GODEBUG="tarinsecurepath=0,zipinsecurepath=0" go build -gcflags="all=-N -l" $(COVERAGE_FLAG) -v -ldflags '${LDFLAGS}' -o ${DIST_DIR}/${CLI_NAME} ./
+
+.PHONY: ui
+ui:
+	cd ui && yarn build
 
 .PHONY: dep-backend-local
 dep-backend-local:
