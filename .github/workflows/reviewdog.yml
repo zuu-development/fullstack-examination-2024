@@ -17,4 +17,5 @@ jobs:
         with:
           go_version_file: go.mod
           golangci_lint_version: v1.61.0
+          fail_on_error: true
 
