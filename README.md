@@ -20,6 +20,7 @@ asdfを使って開発環境を構築します。asdfは複数の言語のバー
 ```bash
 asdf plugin add air
 asdf plugin add golang
+asdf plugin add golangci-lint
 asdf plugin add gotestsum
 asdf plugin add nodejs
 asdf plugin add swag

@@ -1,0 +1,21 @@
+name: reviewdog
+on:
+  pull_request:
+    paths:
+      - '**.go'
+jobs:
+  golangci-lint:
+    name: runner / golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.0
+        with:
+          fetch-depth: 0
+
+      - name: golangci-lint
+        uses: reviewdog/action-golangci-lint@v2.6.2
+        with:
+          go_version_file: go.mod
+          golangci_lint_version: v1.61.0
+          fail_on_error: true
+
