@@ -30,13 +30,13 @@ type TodoAPIServerOpts struct {
 }
 
 // NewAPI returns a new instance of the Todo API server
-func NewAPI(opts TodoAPIServerOpts) Server {
+func NewAPI(opts TodoAPIServerOpts) (Server, error) {
 	logger := log.NewEntry(log.StandardLogger())
 	log.SetFormatter(&log.JSONFormatter{})
 
 	dbInstance, err := db.New(opts.Config.SQLite.DBFilename)
 	if err != nil {
-		logger.Fatalf("Failed to connect to database: %v", err)
+		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
 
 	engine := echo.New()
@@ -64,7 +64,7 @@ func NewAPI(opts TodoAPIServerOpts) Server {
 		log:    logger,
 		db:     dbInstance,
 	}
-	return s
+	return s, nil
 }
 
 func (s *todoAPIServer) Name() string {

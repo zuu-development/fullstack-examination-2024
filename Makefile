@@ -62,6 +62,9 @@ fmt:
 test-backend:
 	gotestsum --format=testname --rerun-fails
 
+test-backend-ci:
+	gotestsum --format=testname -- -cover -coverprofile=coverage.out ./...
+
 # ビルド時にチェックする .go ファイル
 SWAG_GO_FILES:=$(shell find internal/handler -type f -name '*.go' -print)
 
