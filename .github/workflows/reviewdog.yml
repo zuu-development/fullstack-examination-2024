@@ -16,5 +16,5 @@ jobs:
         uses: reviewdog/action-golangci-lint@v2.6.2
         with:
           go_version_file: go.mod
-          golangci_lint_version: 1.61.0
+          golangci_lint_version: v1.61.0
 
