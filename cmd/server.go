@@ -16,7 +16,7 @@ func init() {
 	rootCmd.AddCommand(NewServerCmd())
 }
 
-// NewServerCmd returns a new `server` command to be used as a sub-command to root
+// NewServerC returns a new `server` command to be used as a sub-command to root
 func NewServerCmd() *cobra.Command {
 	serverCmd := cobra.Command{
 		Use:   "server",
