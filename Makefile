@@ -41,10 +41,14 @@ serve-ui:
 .PHONY: lint
 lint:
 	golangci-lint run
+	cd ui && yarn lint
 
-.PHONY: lint-fix
-lint-fix:
+.PHONY: fmt
+fmt:
+	go mod tidy
 	golangci-lint run --fix
+	swag fmt
+	cd ui && yarn lint-fix
 
 .PHONY: dep-ui-local
 dep-ui-local:
@@ -53,11 +57,6 @@ dep-ui-local:
 .PHONY: test-backend
 test-backend:
 	gotestsum --format=testname --rerun-fails
-
-.PHONY: swag-fmt
-swag-fmt:
-	swag fmt
-
 
 # ビルド時にチェックする .go ファイル
 SWAG_GO_FILES:=$(shell find internal/handler -type f -name '*.go' -print)
