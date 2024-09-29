@@ -23,6 +23,8 @@ logs
 .env.*
 !.env.example
 
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
 
 .vscode
 tmp
