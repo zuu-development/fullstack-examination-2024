@@ -30,9 +30,17 @@ cli:
 cli-local:
 	GODEBUG="tarinsecurepath=0,zipinsecurepath=0" go build -gcflags="all=-N -l" $(COVERAGE_FLAG) -v -ldflags '${LDFLAGS}' -o ${DIST_DIR}/${CLI_NAME} ./
 
+.PHONY: dep-backend-local
+dep-backend-local:
+	go mod download
+
 .PHONY: serve-backend
 serve-backend:
 	air -c .air.toml
+
+.PHONY: dep-ui-local
+dep-ui-local:
+	cd ui && yarn install
 
 .PHONY: serve-ui
 serve-ui:
@@ -50,10 +58,6 @@ fmt:
 	swag fmt
 	cd ui && yarn lint-fix
 
-.PHONY: dep-ui-local
-dep-ui-local:
-	cd ui && yarn install
-
 .PHONY: test-backend
 test-backend:
 	gotestsum --format=testname --rerun-fails
@@ -66,3 +70,6 @@ docs/swagger.yaml: main.go $(SWAG_GO_FILES)
 
 docs/swagger.html: docs/swagger.yaml
 	npx @redocly/cli@1.25.3 build-docs -o docs/swagger.html docs/swagger.yaml
+
+.PHONY: swagger
+swagger: docs/swagger.html
