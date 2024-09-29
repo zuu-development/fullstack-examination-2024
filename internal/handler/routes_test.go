@@ -27,12 +27,12 @@ func TestRegister(t *testing.T) {
 		target       string
 		expectedCode int
 	}{
-		{"Health_Check", http.MethodGet, "/healthz", http.StatusOK},
-		{"Create_Todo_without_body", http.MethodPost, "/api/todos", http.StatusBadRequest}, // Assuming no body is sent, should return BadRequest
-		{"Get_all_Todos", http.MethodGet, "/api/todos", http.StatusOK},
-		{"Get_non-existent_Todo", http.MethodGet, "/api/todos/1", http.StatusNotFound},       // Assuming no todo with id 1 exists
-		{"Update_Todo_without_body", http.MethodPut, "/api/todos/1", http.StatusNotFound},    // Assuming no body is sent, should return BadRequest
-		{"Delete_non-existent_Todo", http.MethodDelete, "/api/todos/1", http.StatusNotFound}, // Assuming no todo with id 1 exists
+		{"Health_Check", http.MethodGet, "/api/v1/healthz", http.StatusOK},
+		{"Create_Todo_without_body", http.MethodPost, "/api/v1/todos", http.StatusBadRequest}, // Assuming no body is sent, should return BadRequest
+		{"Get_all_Todos", http.MethodGet, "/api/v1/todos", http.StatusOK},
+		{"Get_non-existent_Todo", http.MethodGet, "/api/v1/todos/1", http.StatusNotFound},       // Assuming no todo with id 1 exists
+		{"Update_Todo_without_body", http.MethodPut, "/api/v1/todos/1", http.StatusNotFound},    // Assuming no body is sent, should return BadRequest
+		{"Delete_non-existent_Todo", http.MethodDelete, "/api/v1/todos/1", http.StatusNotFound}, // Assuming no todo with id 1 exists
 	}
 
 	for _, tt := range tests {
