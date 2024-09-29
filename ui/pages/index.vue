@@ -8,7 +8,8 @@
     </div>
     <div v-if="todos.length > 0">
       <div v-for="todo in todos" :key="todo.ID" class="todo-item">
-        <input v-if="todo.isEditing" v-model="todo.Task" class="edit-input" @blur="editTodo(todo)"
+        <input
+v-if="todo.isEditing" v-model="todo.Task" class="edit-input" @blur="editTodo(todo)"
           @keyup.enter="editTodo(todo)">
         <span v-else :class="{ 'done-task': todo.Status === 'done' }" @click="enableEdit(todo)">{{ todo.Task
           }}</span>
