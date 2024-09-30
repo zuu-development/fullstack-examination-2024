@@ -90,3 +90,7 @@ make swagger
 ```bash
 make test-backend
 ```
+
+## examination
+
+[examination.md](./examination.md) に記載されている課題を解いてください。

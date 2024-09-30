@@ -1,4 +1,4 @@
-# 問題
+# Question
 
 Please answer each question.
 
@@ -7,7 +7,7 @@ In addition to answering the questions, the following items will also be conside
 - Fixing test code
 - Refactoring (organizing and optimizing code)
 - Code formatting (structuring code)
-- Adding or updating documentation
+- Adding or updating documentation(swagger etc.)
 
 ## No.1
 
