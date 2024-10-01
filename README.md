@@ -36,17 +36,21 @@ asdf install
 
 ### Start Development Environment
 
-### backend
+#### backend
 
 ```bash
 make dep-backend-local
 ```
 
 ```bash
+make migrate
+```
+
+```bash
 make serve-backend
 ```
 
-### ui
+#### ui
 
 ```bash
 make dep-ui-local
@@ -57,6 +61,20 @@ make serve-ui
 ```
 
 [http://localhost:3000/](http://localhost:3000/) にアクセスすると、UIの画面が表示されます。
+
+### Migration
+
+マイグレーションを実行します。
+
+```bash
+make migrate
+```
+
+スキーマの状況からマイグレーションが失敗するようになった場合は、DBを削除してから再度マイグレーションを実行してください。
+
+```bash
+make reset-local-db migrate
+```
 
 ### Format
 
