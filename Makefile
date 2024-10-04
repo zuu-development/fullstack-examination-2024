@@ -38,6 +38,14 @@ ui:
 dep-backend-local:
 	go mod download
 
+.PHONY: migrate
+migrate:
+	go run main.go migrate --config config.yaml
+
+.PHONY: reset-local-db
+reset-local-db:
+	rm ./tmp/gorm.db
+
 .PHONY: serve-backend
 serve-backend:
 	air -c .air.toml

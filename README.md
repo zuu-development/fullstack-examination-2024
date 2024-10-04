@@ -2,12 +2,12 @@
 
 ## What is Fullstack examination 2024?
 
-ZUUのフルスタックエンジニアを採用する際に、技術的なスキルを測るための試験のためのリポジトリです。
+This is a repository for exams used to assess technical skills for hiring full-stack engineers (Golang).
 
 ## Dev
 
-asdfを使って開発環境を構築します。asdfは複数の言語のバージョン管理を行うツールです。
-もしasdfを利用できない環境の場合は、環境に合わせたインストールを行ってください。
+You will set up the development environment using asdf, a tool for managing multiple language versions.
+If you are in an environment where asdf cannot be used, please install the necessary tools according to your environment.
 
 ### Install
 
@@ -28,7 +28,7 @@ asdf plugin add swag
 
 #### Install asdf versions
 
-.tool-versions に記載されているバージョンをインストールします。
+Please install the versions listed in the `.tool-versions` file.
 
 ```bash
 asdf install
@@ -36,17 +36,21 @@ asdf install
 
 ### Start Development Environment
 
-### backend
+#### backend
 
 ```bash
 make dep-backend-local
 ```
 
 ```bash
+make migrate
+```
+
+```bash
 make serve-backend
 ```
 
-### ui
+#### ui
 
 ```bash
 make dep-ui-local
@@ -56,11 +60,25 @@ make dep-ui-local
 make serve-ui
 ```
 
-[http://localhost:3000/](http://localhost:3000/) にアクセスすると、UIの画面が表示されます。
+When you access [http://localhost:3000/](http://localhost:3000/), the UI screen will be displayed.
+
+### Migration
+
+Please run the migration process.
+
+```bash
+make migrate
+```
+
+If the migration fails due to the current state of the schema, please delete the database and run the migration again.
+
+```bash
+make reset-local-db migrate
+```
 
 ### Format
 
-コードに統一性を持たせるために、フォーマットを行います。開発が終わったら実行しましょう。
+To maintain consistency in the code, formatting should be applied. Be sure to run it once development is complete.
 
 ```bash
 make fmt
@@ -68,25 +86,26 @@ make fmt
 
 ### Swagger
 
-Swaggerを利用してAPIのドキュメントを作成します。
+Please create API documentation using Swagger.
 
 ```bash
 make swagger
 ```
 
-ドキュメント生成のために、Goファイルへのコメント記述が必要です。
-記法はこちらのドキュメントを参考にしてください。
+To generate documentation, you need to add comments to your Go files. Please refer to this documentation for the correct syntax and guidelines.
 
-[swaggo/swag: Automatically generate RESTful API documentation with Swagger 2.0 for Go.](https://github.com/swaggo/swag?tab=readme-ov-file#declarative-comments-format)
+[swaggo/swag: Automatically generate RESTful API documentation with Swagger 2.0 for Go.](https://github.com/swaggo/swag#declarative-comments-format)
 
-`make serve-backend`を実行している状態で、[http://localhost:1314/](http://localhost:1314/) にアクセスするとSwagger UIが表示されます。
-
-もしくは`docs/swagger.yaml`を開いてください。
+While running `make serve-backend`, you can access [http://localhost:1314/](http://localhost:1314/) to view the Swagger UI. Or alternatively, you can open `docs/swagger.yaml` to view the API documentation.
 
 ### Test
 
-テストを実行します。
+Please run the tests.
 
 ```bash
 make test-backend
 ```
+
+## examination
+
+Please solve the tasks outlined in [examination.md](./examination.md).
