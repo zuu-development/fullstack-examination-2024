@@ -168,13 +168,31 @@ func (t *todoHandler) Find(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseData{Data: res})
 }
 
-// @Summary	Find all todos
+type findQueryParams struct {
+	Task   string       `query:"task"`
+	Status model.Status `query:"status" validate:"omitempty,oneof=created processing done"`
+}
+
+// @Summary	Find todos by optional task and status
 // @Tags		todos
-// @Success	200	{object}	ResponseData{Data=[]model.Todo}
-// @Failure	500	{object}	ResponseError
-// @Router		/todos [get]
+// @Accept		json
+// @Produce	json
+// @Param		task	query		string							false	"Task to filter todos (supports partial matches)"
+// @Param		status	query		string							false	"Status to filter todos (must be one of: 'created', 'processing', or 'done')"
+// @Success	200		{array}		ResponseData{Data=model.Todo}	"Successfully retrieved todos"
+// @Failure	400		{object}	ResponseError					"Invalid query parameters"
+// @Failure	500		{object}	ResponseError					"Failed to fetch records from the database"
+// @Router		/api/v1/todos [get]
 func (t *todoHandler) FindAll(c echo.Context) error {
-	res, err := t.service.FindAll()
+	findQueryParams := findQueryParams{}
+
+	err := t.MustBind(c, &findQueryParams)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest,
+			ResponseError{Errors: []Error{{Code: errors.CodeBadRequest, Message: err.Error()}}})
+	}
+
+	res, err := t.service.FindAll(findQueryParams.Task, findQueryParams.Status)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			ResponseError{Errors: []Error{{Code: errors.CodeInternalServerError, Message: err.Error()}}})

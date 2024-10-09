@@ -12,7 +12,7 @@ type Todo interface {
 	Update(id int, task string, status model.Status) (*model.Todo, error)
 	Delete(id int) error
 	Find(id int) (*model.Todo, error)
-	FindAll() ([]*model.Todo, error)
+	FindAll(task string, status model.Status) ([]*model.Todo, error)
 }
 
 type todo struct {
@@ -67,8 +67,8 @@ func (t *todo) Find(id int) (*model.Todo, error) {
 	return todo, nil
 }
 
-func (t *todo) FindAll() ([]*model.Todo, error) {
-	todo, err := t.todoRepository.FindAll()
+func (t *todo) FindAll(task string, status model.Status) ([]*model.Todo, error) {
+	todo, err := t.todoRepository.FindAll(task, status)
 	if err != nil {
 		return nil, err
 	}

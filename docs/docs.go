@@ -10,11 +10,77 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {},
+        "license": {
+            "name": "Apache 2.0"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/todos": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "todos"
+                ],
+                "summary": "Find todos by optional task and status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task to filter todos (supports partial matches)",
+                        "name": "task",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Status to filter todos (must be one of: 'created', 'processing', or 'done')",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully retrieved todos",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "allOf": [
+                                    {
+                                        "$ref": "#/definitions/handler.ResponseData"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "properties": {
+                                            "Data": {
+                                                "$ref": "#/definitions/model.Todo"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseError"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to fetch records from the database",
+                        "schema": {
+                            "$ref": "#/definitions/handler.ResponseError"
+                        }
+                    }
+                }
+            }
+        },
         "/healthz": {
             "get": {
                 "produces": [
@@ -47,41 +113,6 @@ const docTemplate = `{
             }
         },
         "/todos": {
-            "get": {
-                "tags": [
-                    "todos"
-                ],
-                "summary": "Find all todos",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/handler.ResponseData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "Data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/model.Todo"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/handler.ResponseError"
-                        }
-                    }
-                }
-            },
             "post": {
                 "consumes": [
                     "application/json"

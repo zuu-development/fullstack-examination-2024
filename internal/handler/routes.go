@@ -29,5 +29,6 @@ func Register(e *echo.Echo, db *gorm.DB) {
 		todo.GET("/:id", todoHandler.Find)
 		todo.PUT("/:id", todoHandler.Update)
 		todo.DELETE("/:id", todoHandler.Delete)
+
 	}
 }
