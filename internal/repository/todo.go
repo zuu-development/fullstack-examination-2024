@@ -2,6 +2,8 @@
 package repository
 
 import (
+	"sort"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/zuu-development/fullstack-examination-2024/internal/model"
 	"gorm.io/gorm"
@@ -80,5 +82,13 @@ func (td *todo) FindAll(task string, status model.Status) ([]*model.Todo, error)
 	if err != nil {
 		return nil, err
 	}
+	sortTodosByPriority(todos)
 	return todos, nil
+}
+
+// Sort a slice of Todo structs by ID in decreasing order
+func sortTodosByPriority(todos []*model.Todo) {
+	sort.Slice(todos, func(i, j int) bool {
+		return todos[i].Priority > todos[j].Priority
+	})
 }

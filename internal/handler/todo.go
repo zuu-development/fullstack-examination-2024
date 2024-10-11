@@ -30,7 +30,8 @@ func NewTodo(s service.Todo) TodoHandler {
 
 // CreateRequest is the request parameter for creating a new todo
 type CreateRequest struct {
-	Task string `json:"task" validate:"required"`
+	Task     string `json:"task" validate:"required"`
+	Priority int    `json:"priority,omitempty"`
 }
 
 // @Summary	Create a new todo
@@ -49,7 +50,7 @@ func (t *todoHandler) Create(c echo.Context) error {
 			ResponseError{Errors: []Error{{Code: errors.CodeBadRequest, Message: err.Error()}}})
 	}
 
-	todo, err := t.service.Create(req.Task)
+	todo, err := t.service.Create(req.Task, req.Priority)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			ResponseError{Errors: []Error{{Code: errors.CodeInternalServerError, Message: err.Error()}}})

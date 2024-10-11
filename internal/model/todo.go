@@ -5,6 +5,7 @@ import "time"
 // Todo is the model for the todo endpoint.
 type Todo struct {
 	ID        int `gorm:"primaryKey"`
+	Priority  int
 	Task      string
 	Status    Status
 	CreatedAt time.Time `gorm:"autoCreateTime"`
@@ -12,10 +13,11 @@ type Todo struct {
 }
 
 // NewTodo returns a new instance of the todo model.
-func NewTodo(task string) *Todo {
+func NewTodo(task string, priority int) *Todo {
 	return &Todo{
-		Task:   task,
-		Status: Created,
+		Task:     task,
+		Priority: priority,
+		Status:   Created,
 	}
 }
 
