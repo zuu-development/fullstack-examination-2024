@@ -34,15 +34,18 @@ type CreateRequest struct {
 	Priority int    `json:"priority,omitempty"`
 }
 
-// @Summary	Create a new todo
-// @Tags		todos
-// @Accept		json
-// @Produce	json
-// @Param		request	body		CreateRequest	true	"json"
-// @Success	201		{object}	ResponseError{data=model.Todo}
-// @Failure	400		{object}	ResponseError
-// @Failure	500		{object}	ResponseError
-// @Router		/todos [post]
+// Create handles the creation of a new todo item.
+//
+//	@Summary		Create a new todo
+//	@Description	Creates a new todo item with the specified task and optional priority
+//	@Tags			todos
+//	@Accept			json
+//	@Produce		json
+//	@Param			request	body		CreateRequest					true	"Todo creation request"
+//	@Success		201		{object}	ResponseData{Data=model.Todo}	"Successfully created a new todo item"
+//	@Failure		400		{object}	ResponseError					"Invalid request parameters"
+//	@Failure		500		{object}	ResponseError					"Internal server error while creating the todo item"
+//	@Router			/api/v1/todos [post]
 func (t *todoHandler) Create(c echo.Context) error {
 	var req CreateRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -76,16 +79,20 @@ type UpdateRequestPath struct {
 	ID int `param:"id" validate:"required"`
 }
 
-// @Summary	Update a todo
-// @Tags		todos
-// @Accept		json
-// @Produce	json
-// @Param		body	body		UpdateRequestBody	true	"body"
-// @Param		path	path		UpdateRequestPath	false	"path"
-// @Success	201		{object}	ResponseData{Data=model.Todo}
-// @Failure	400		{object}	ResponseError
-// @Failure	500		{object}	ResponseError
-// @Router		/todos/:id [put]
+// Update handles updating an existing todo item.
+//
+//	@Summary		Update a todo
+//	@Description	Updates the details of a todo item with the specified ID
+//	@Tags			todos
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		int								true	"ID of the todo to be updated"
+//	@Param			request	body		UpdateRequestBody				true	"Todo update request body"
+//	@Success		200		{object}	ResponseData{Data=model.Todo}	"Successfully updated the todo item"
+//	@Failure		400		{object}	ResponseError					"Invalid request parameters"
+//	@Failure		404		{object}	ResponseError					"Todo item not found"
+//	@Failure		500		{object}	ResponseError					"Internal server error while updating the todo item"
+//	@Router			/api/v1/todos/{id} [put]
 func (t *todoHandler) Update(c echo.Context) error {
 	var req UpdateRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -111,14 +118,19 @@ type DeleteRequest struct {
 	ID int `param:"id" validate:"required"`
 }
 
-// @Summary	Delete a todo
-// @Tags		todos
-// @Param		path	path	DeleteRequest	false	"path"
-// @Success	204
-// @Failure	400	{object}	ResponseError
-// @Failure	404	{object}	ResponseError
-// @Failure	500	{object}	ResponseError
-// @Router		/todos/:id [delete]
+// Delete handles deleting an existing todo item.
+//
+//	@Summary		Delete a todo
+//	@Description	Deletes a todo item with the specified ID
+//	@Tags			todos
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path	int	true	"ID of the todo to be deleted"
+//	@Success		204	"Successfully deleted the todo item"
+//	@Failure		400	{object}	ResponseError	"Invalid request parameters"
+//	@Failure		404	{object}	ResponseError	"Todo item not found"
+//	@Failure		500	{object}	ResponseError	"Internal server error while deleting the todo item"
+//	@Router			/api/v1/todos/{id} [delete]
 func (t *todoHandler) Delete(c echo.Context) error {
 	var req DeleteRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -142,14 +154,19 @@ type FindRequest struct {
 	ID int `param:"id" validate:"required"`
 }
 
-// @Summary	Find a todo
-// @Tags		todos
-// @Param		path	path		FindRequest	false	"path"
-// @Success	200		{object}	ResponseData{Data=model.Todo}
-// @Failure	400		{object}	ResponseError
-// @Failure	404		{object}	ResponseError
-// @Failure	500		{object}	ResponseError
-// @Router		/todos/:id [get]
+// Find handles retrieving a todo item by its ID.
+//
+//	@Summary		Find a todo
+//	@Description	Retrieves a todo item with the specified ID
+//	@Tags			todos
+//	@Accept			json
+//	@Produce		json
+//	@Param			id	path		int								true	"ID of the todo to be retrieved"
+//	@Success		200	{object}	ResponseData{Data=model.Todo}	"Successfully retrieved the todo item"
+//	@Failure		400	{object}	ResponseError					"Invalid request parameters"
+//	@Failure		404	{object}	ResponseError					"Todo item not found"
+//	@Failure		500	{object}	ResponseError					"Internal server error while retrieving the todo item"
+//	@Router			/api/v1/todos/{id} [get]
 func (t *todoHandler) Find(c echo.Context) error {
 	var req FindRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -174,16 +191,18 @@ type findQueryParams struct {
 	Status model.Status `query:"status" validate:"omitempty,oneof=created processing done"`
 }
 
-// @Summary	Find todos by optional task and status
-// @Tags		todos
-// @Accept		json
-// @Produce	json
-// @Param		task	query		string							false	"Task to filter todos (supports partial matches)"
-// @Param		status	query		string							false	"Status to filter todos (must be one of: 'created', 'processing', or 'done')"
-// @Success	200		{array}		ResponseData{Data=model.Todo}	"Successfully retrieved todos"
-// @Failure	400		{object}	ResponseError					"Invalid query parameters"
-// @Failure	500		{object}	ResponseError					"Failed to fetch records from the database"
-// @Router		/api/v1/todos [get]
+// FindAll Find todos by optional task and status
+//
+//	@Summary	Find todos by optional task and status
+//	@Tags		todos
+//	@Accept		json
+//	@Produce	json
+//	@Param		task	query		string							false	"Task to filter todos (supports partial matches)"
+//	@Param		status	query		string							false	"Status to filter todos (must be one of: 'created', 'processing', or 'done')"
+//	@Success	200		{array}		ResponseData{Data=model.Todo}	"Successfully retrieved todos"
+//	@Failure	400		{object}	ResponseError					"Invalid query parameters"
+//	@Failure	500		{object}	ResponseError					"Failed to fetch records from the database"
+//	@Router		/api/v1/todos [get]
 func (t *todoHandler) FindAll(c echo.Context) error {
 	findQueryParams := findQueryParams{}
 

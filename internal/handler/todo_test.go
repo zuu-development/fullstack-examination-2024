@@ -46,7 +46,7 @@ func TestTodoHandler_Create(t *testing.T) {
 			createBody: `{"task":"Created Task"}`,
 			want: want{
 				StatusCode: http.StatusCreated,
-				Response:   []byte(`{"data":{"Task":"Created Task","Status":"created"}}`),
+				Response:   []byte(`{"data":{"Task":"Created Task","Status":"created","Priority":0}}`),
 			},
 		},
 		{
@@ -54,7 +54,7 @@ func TestTodoHandler_Create(t *testing.T) {
 			createBody: `{"task":"Created Task", "status":"done"}`,
 			want: want{
 				StatusCode: http.StatusCreated,
-				Response:   []byte(`{"data":{"Task":"Created Task","Status":"created"}}`),
+				Response:   []byte(`{"data":{"Task":"Created Task","Status":"created","Priority":0}}`),
 			},
 		},
 		{
@@ -128,7 +128,7 @@ func TestTodoHandler_Update(t *testing.T) {
 			updateBody: `{"task":"Updated Task","status":"done"}`,
 			want: want{
 				StatusCode: http.StatusOK,
-				Response:   []byte(`{"data":{"Task":"Updated Task","Status":"done"}}`),
+				Response:   []byte(`{"data":{"Task":"Updated Task","Status":"done","Priority":0}}`),
 			},
 		},
 		{
@@ -297,7 +297,7 @@ func TestTodoHandler_Find(t *testing.T) {
 			createBody: `{"task":"Found Task"}`,
 			want: want{
 				StatusCode: http.StatusOK,
-				Response:   []byte(`{"data":{"Task":"Found Task","Status":"created"}}`),
+				Response:   []byte(`{"data":{"Task":"Found Task","Status":"created","Priority":0}}`),
 			},
 		},
 		{

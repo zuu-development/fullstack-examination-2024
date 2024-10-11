@@ -24,6 +24,15 @@ v-if="todo.isEditing" v-model="todo.Task" class="edit-input" @blur="editTodo(tod
     <div v-else>
       <p>タスクがありません。</p>
     </div>
+    <div v-if="doneTodos.length > 0">
+      <h3>Completed Tasks</h3>
+      <div v-for="todo in doneTodos" :key="todo.ID" class="todo-item">
+        <span class="done-task">{{ todo.Task }}</span>
+        <div class="buttons">
+          <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -33,6 +42,7 @@ export default {
     return {
       newTask: '',
       todos: [],
+      doneTodos: [],
       statusMessage: '',
     };
   },
@@ -46,7 +56,12 @@ export default {
         });
         if (!response.ok) throw new Error(`Failed to get todo list. statusCode: ${response.status}`);
         response.json().then(data => {
-          this.todos = data.data;
+          this.todos = data.data.filter(
+            (todo) => todo.Status !== 'done'
+          )
+          this.doneTodos = data.data.filter(
+            (todo) => todo.Status === 'done'
+          )
         });
       } catch (error) {
         console.error(error);
@@ -120,6 +135,15 @@ export default {
         if (!response.ok) throw new Error(`Failed to update todo Status. statusCode: ${response.status}`);
 
         todo.Status = todo.Status === 'done' ? 'created' : 'done';
+
+        // this.fetchTodos()
+        this.doneTodos = [...this.todos.filter(
+          (todo) => todo.Status === 'done'
+        ),...this.doneTodos]
+        this.todos = this.todos.filter(
+            (todo) => todo.Status !== 'done'
+        )
+          
         this.statusMessage = 'タスクのステータスが変更されました';
       } catch (error) {
         console.error('Error updating todo Status:', error);
@@ -138,6 +162,7 @@ export default {
         if (!response.ok) throw new Error(`Failed to update todo Status. statusCode: ${response.status}`);
 
         this.todos = this.todos.filter(todo => todo.ID !== id);
+        this.doneTodos = this.doneTodos.filter(todo => todo.ID !== id);
         this.statusMessage = 'タスクが削除されました';
       } catch (error) {
         console.error('Error deleting todo:', error);
@@ -217,10 +242,6 @@ button {
   padding: 10px;
   background-color: #f0f0f0;
   border-radius: 4px;
-}
-
-.done-task {
-  text-decoration: line-through;
 }
 
 .edit-input {

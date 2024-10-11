@@ -2,6 +2,8 @@ basePath: /api/v1
 definitions:
   handler.CreateRequest:
     properties:
+      priority:
+        type: integer
       task:
         type: string
     required:
@@ -49,6 +51,8 @@ definitions:
       createdAt:
         type: string
       id:
+        type: integer
+      priority:
         type: integer
       status:
         $ref: '#/definitions/model.Status'
@@ -105,29 +109,12 @@ paths:
       summary: Find todos by optional task and status
       tags:
       - todos
-  /healthz:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/handler.ResponseData'
-            - properties:
-                data:
-                  type: string
-              type: object
-      summary: Health check
-      tags:
-      - health
-  /todos:
     post:
       consumes:
       - application/json
+      description: Creates a new todo item with the specified task and optional priority
       parameters:
-      - description: json
+      - description: Todo creation request
         in: body
         name: request
         required: true
@@ -137,59 +124,7 @@ paths:
       - application/json
       responses:
         "201":
-          description: Created
-          schema:
-            allOf:
-            - $ref: '#/definitions/handler.ResponseError'
-            - properties:
-                data:
-                  $ref: '#/definitions/model.Todo'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handler.ResponseError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handler.ResponseError'
-      summary: Create a new todo
-      tags:
-      - todos
-  /todos/:id:
-    delete:
-      parameters:
-      - in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handler.ResponseError'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/handler.ResponseError'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/handler.ResponseError'
-      summary: Delete a todo
-      tags:
-      - todos
-    get:
-      parameters:
-      - in: path
-        name: id
-        required: true
-        type: integer
-      responses:
-        "200":
-          description: OK
+          description: Successfully created a new todo item
           schema:
             allOf:
             - $ref: '#/definitions/handler.ResponseData'
@@ -198,15 +133,79 @@ paths:
                   $ref: '#/definitions/model.Todo'
               type: object
         "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/handler.ResponseError'
-        "404":
-          description: Not Found
+          description: Invalid request parameters
           schema:
             $ref: '#/definitions/handler.ResponseError'
         "500":
-          description: Internal Server Error
+          description: Internal server error while creating the todo item
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+      summary: Create a new todo
+      tags:
+      - todos
+  /api/v1/todos/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes a todo item with the specified ID
+      parameters:
+      - description: ID of the todo to be deleted
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Successfully deleted the todo item
+        "400":
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+        "404":
+          description: Todo item not found
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+        "500":
+          description: Internal server error while deleting the todo item
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+      summary: Delete a todo
+      tags:
+      - todos
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a todo item with the specified ID
+      parameters:
+      - description: ID of the todo to be retrieved
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the todo item
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseData'
+            - properties:
+                Data:
+                  $ref: '#/definitions/model.Todo'
+              type: object
+        "400":
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+        "404":
+          description: Todo item not found
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+        "500":
+          description: Internal server error while retrieving the todo item
           schema:
             $ref: '#/definitions/handler.ResponseError'
       summary: Find a todo
@@ -215,22 +214,24 @@ paths:
     put:
       consumes:
       - application/json
+      description: Updates the details of a todo item with the specified ID
       parameters:
-      - description: body
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/handler.UpdateRequestBody'
-      - in: path
+      - description: ID of the todo to be updated
+        in: path
         name: id
         required: true
         type: integer
+      - description: Todo update request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateRequestBody'
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: Successfully updated the todo item
           schema:
             allOf:
             - $ref: '#/definitions/handler.ResponseData'
@@ -239,16 +240,42 @@ paths:
                   $ref: '#/definitions/model.Todo'
               type: object
         "400":
-          description: Bad Request
+          description: Invalid request parameters
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+        "404":
+          description: Todo item not found
           schema:
             $ref: '#/definitions/handler.ResponseError'
         "500":
-          description: Internal Server Error
+          description: Internal server error while updating the todo item
           schema:
             $ref: '#/definitions/handler.ResponseError'
       summary: Update a todo
       tags:
       - todos
+  /healthz:
+    get:
+      description: Check the health status of the service
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseData'
+            - properties:
+                Data:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handler.ResponseError'
+      summary: Health Check
+      tags:
+      - health
 schemes:
 - http
 swagger: "2.0"
