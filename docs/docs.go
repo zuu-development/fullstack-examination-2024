@@ -10,6 +10,9 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {},
+        "license": {
+            "name": "Apache 2.0"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -52,6 +55,26 @@ const docTemplate = `{
                     "todos"
                 ],
                 "summary": "Find all todos",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter todos by task content",
+                        "name": "task",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter todos by status (created or done)",
+                        "name": "status",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Filter todos by priority (high or low)",
+                        "name": "priority",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -295,9 +318,13 @@ const docTemplate = `{
         "handler.CreateRequest": {
             "type": "object",
             "required": [
+                "priority",
                 "task"
             ],
             "properties": {
+                "priority": {
+                    "type": "string"
+                },
                 "task": {
                     "type": "string"
                 }
@@ -366,6 +393,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "priority": {
+                    "type": "string"
                 },
                 "status": {
                     "$ref": "#/definitions/model.Status"

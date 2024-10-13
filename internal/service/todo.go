@@ -8,11 +8,11 @@ import (
 
 // Todo is the service for the todo endpoint.
 type Todo interface {
-	Create(task string) (*model.Todo, error)
+	Create(task string, priority string) (*model.Todo, error)
 	Update(id int, task string, status model.Status) (*model.Todo, error)
 	Delete(id int) error
 	Find(id int) (*model.Todo, error)
-	FindAll() ([]*model.Todo, error)
+	FindAll(task string, status string, priority string) ([]*model.Todo, error)
 }
 
 type todo struct {
@@ -24,8 +24,8 @@ func NewTodo(r repository.Todo) Todo {
 	return &todo{r}
 }
 
-func (t *todo) Create(task string) (*model.Todo, error) {
-	todo := model.NewTodo(task)
+func (t *todo) Create(task string, priority string) (*model.Todo, error) {
+	todo := model.NewTodo(task, priority)
 	if err := t.todoRepository.Create(todo); err != nil {
 		return nil, err
 	}
@@ -67,8 +67,8 @@ func (t *todo) Find(id int) (*model.Todo, error) {
 	return todo, nil
 }
 
-func (t *todo) FindAll() ([]*model.Todo, error) {
-	todo, err := t.todoRepository.FindAll()
+func (t *todo) FindAll(task string, status string, priority string) ([]*model.Todo, error) {
+	todo, err := t.todoRepository.FindAll(task, status, priority)
 	if err != nil {
 		return nil, err
 	}

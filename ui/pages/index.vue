@@ -2,17 +2,53 @@
   <div class="todo-main">
     <h1>TODOリスト</h1>
     <div v-if="statusMessage" class="status-message">{{ statusMessage }}</div>
+    
+    <!-- Add search inputs -->
+    <div class="search-group">
+      <input v-model="searchTask" placeholder="タスクで検索" @input="searchTodos">
+      <select v-model="searchStatus" @change="searchTodos">
+        <option value="">全てのステータス</option>
+        <option value="created">未完了</option>
+        <option value="done">完了</option>
+      </select>
+      <select v-model="searchPriority" @change="searchTodos">
+        <option value="">全ての優先度</option>
+        <option value="high">高</option>
+        <option value="low">低</option>
+      </select>
+    </div>
+
     <div class="input-group">
       <input v-model="newTask" placeholder="新しいタスクを入力" @keyup.enter="addTodo">
+      <select v-model="newTaskPriority">
+        <option value="low">低</option>
+        <option value="high">高</option>
+      </select>
       <button @click="addTodo">追加</button>
     </div>
-    <div v-if="todos.length > 0">
-      <div v-for="todo in todos" :key="todo.ID" class="todo-item">
-        <input
-v-if="todo.isEditing" v-model="todo.Task" class="edit-input" @blur="editTodo(todo)"
-          @keyup.enter="editTodo(todo)">
-        <span v-else :class="{ 'done-task': todo.Status === 'done' }" @click="enableEdit(todo)">{{ todo.Task
-          }}</span>
+    <div v-if="activeTodos.length > 0">
+      <h2>未完了のタスク</h2>
+      <div v-for="todo in activeTodos" :key="todo.ID" class="todo-item">
+        <div class="todo-content">
+          <span 
+            class="priority-indicator" 
+            :class="{ 'high': todo.Priority === 'high', 'low': todo.Priority === 'low' }"
+          />
+          <input
+            v-if="todo.isEditing"
+            v-model="todo.Task"
+            class="edit-input"
+            @blur="editTodo(todo)"
+            @keyup.enter="editTodo(todo)"
+          >
+          <span
+            v-else
+            :class="{ 'done-task': todo.Status === 'done' }"
+            @click="enableEdit(todo)"
+          >
+            {{ todo.Task }}
+          </span>
+        </div>
         <div class="buttons">
           <button :class="{ 'done': todo.Status === 'done' }" @click="updateStatus(todo)">
             ✔️
@@ -21,7 +57,38 @@ v-if="todo.isEditing" v-model="todo.Task" class="edit-input" @blur="editTodo(tod
         </div>
       </div>
     </div>
-    <div v-else>
+    <div v-if="completedTodos.length > 0">
+      <h2>完了したタスク</h2>
+      <div v-for="todo in completedTodos" :key="todo.ID" class="todo-item completed">
+        <div class="todo-content">
+          <span 
+            class="priority-indicator" 
+            :class="{ 'high': todo.Priority === 'high', 'low': todo.Priority === 'low' }"
+          />
+          <input
+            v-if="todo.isEditing"
+            v-model="todo.Task"
+            class="edit-input"
+            @blur="editTodo(todo)"
+            @keyup.enter="editTodo(todo)"
+          >
+          <span
+            v-else
+            :class="{ 'done-task': todo.Status === 'done' }"
+            @click="enableEdit(todo)"
+          >
+            {{ todo.Task }}
+          </span>
+        </div>
+        <div class="buttons">
+          <button :class="{ 'done': todo.Status === 'done' }" @click="updateStatus(todo)">
+            ✔️
+          </button>
+          <button class="delete-button" @click="deleteTodo(todo.ID)">🗑️</button>
+        </div>
+      </div>
+    </div>
+    <div v-if="todos.length === 0">
       <p>タスクがありません。</p>
     </div>
   </div>
@@ -32,9 +99,21 @@ export default {
   data() {
     return {
       newTask: '',
+      newTaskPriority: 'low', // Default priority
       todos: [],
       statusMessage: '',
+      searchTask: '',
+      searchStatus: '',
+      searchPriority: '',
     };
+  },
+  computed: {
+    activeTodos() {
+      return this.todos.filter(todo => todo.Status !== 'done');
+    },
+    completedTodos() {
+      return this.todos.filter(todo => todo.Status === 'done');
+    }
   },
   mounted() {
     this.fetchTodos();
@@ -42,7 +121,12 @@ export default {
   methods: {
     async fetchTodos() {
       try {
-        const response = await fetch(`/api/v1/todos`, {
+        const searchParams = new URLSearchParams();
+        if (this.searchTask) searchParams.append('task', this.searchTask);
+        if (this.searchStatus) searchParams.append('status', this.searchStatus);
+        if (this.searchPriority) searchParams.append('priority', this.searchPriority);
+        
+        const response = await fetch(`/api/v1/todos?${searchParams.toString()}`, {
         });
         if (!response.ok) throw new Error(`Failed to get todo list. statusCode: ${response.status}`);
         response.json().then(data => {
@@ -52,6 +136,9 @@ export default {
         console.error(error);
         this.statusMessage = 'タスクの取得に失敗しました';
       }
+    },
+    searchTodos() {
+      this.fetchTodos();
     },
     async addTodo() {
       if (this.newTask.trim() === '') return;
@@ -64,7 +151,8 @@ export default {
           },
           body: JSON.stringify({
             task: this.newTask,
-            Status: 'created'
+            Status: 'created',
+            Priority: this.newTaskPriority
           })
         });
 
@@ -73,6 +161,7 @@ export default {
         response.json().then(data => {
           this.todos.push(data.data);
           this.newTask = '';
+          this.newTaskPriority = 'low'; // Reset priority to default after adding
           this.statusMessage = 'タスクが追加されました';
         });
       } catch (error) {
@@ -150,7 +239,7 @@ export default {
 
 <style scoped>
 .todo-main {
-  max-width: 400px;
+  max-width: 600px;
   margin: 20px auto;
   padding: 20px;
   border-radius: 8px;
@@ -228,5 +317,60 @@ button {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+
+/* Add styles for search inputs */
+.search-group {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.search-group input,
+.search-group select {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.input-group select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 10px;
+  background-color: #fff;
+}
+
+.priority-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.priority-indicator.high {
+  background-color: red;
+}
+
+.priority-indicator.low {
+  background-color: green;
+}
+
+.todo-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.completed {
+  opacity: 0.6;
+}
+
+h2 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 1.2em;
+  color: #333;
 }
 </style>

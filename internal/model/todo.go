@@ -7,15 +7,17 @@ type Todo struct {
 	ID        int `gorm:"primaryKey"`
 	Task      string
 	Status    Status
+	Priority  string
 	CreatedAt time.Time `gorm:"autoCreateTime"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime"`
 }
 
 // NewTodo returns a new instance of the todo model.
-func NewTodo(task string) *Todo {
+func NewTodo(task string, priority string) *Todo {
 	return &Todo{
-		Task:   task,
-		Status: Created,
+		Task:     task,
+		Status:   Created,
+		Priority: priority,
 	}
 }
 

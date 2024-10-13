@@ -2,9 +2,12 @@ basePath: /api/v1
 definitions:
   handler.CreateRequest:
     properties:
+      priority:
+        type: string
       task:
         type: string
     required:
+    - priority
     - task
     type: object
   handler.Error:
@@ -50,6 +53,8 @@ definitions:
         type: string
       id:
         type: integer
+      priority:
+        type: string
       status:
         $ref: '#/definitions/model.Status'
       task:
@@ -61,6 +66,8 @@ host: localhost:8080
 info:
   contact: {}
   description: This is a server for fullstack-examination-2024.
+  license:
+    name: Apache 2.0
   title: fullstack-examination-2024 API
   version: 0.0.1
 paths:
@@ -83,6 +90,19 @@ paths:
       - health
   /todos:
     get:
+      parameters:
+      - description: Filter todos by task content
+        in: query
+        name: task
+        type: string
+      - description: Filter todos by status (created or done)
+        in: query
+        name: status
+        type: string
+      - description: Filter todos by priority (high or low)
+        in: query
+        name: priority
+        type: string
       responses:
         "200":
           description: OK

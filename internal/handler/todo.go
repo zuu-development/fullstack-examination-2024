@@ -30,18 +30,19 @@ func NewTodo(s service.Todo) TodoHandler {
 
 // CreateRequest is the request parameter for creating a new todo
 type CreateRequest struct {
-	Task string `json:"task" validate:"required"`
+	Task     string `json:"task" validate:"required"`
+	Priority string `json:"priority" validate:"required"`
 }
 
-// @Summary	Create a new todo
-// @Tags		todos
-// @Accept		json
-// @Produce	json
-// @Param		request	body		CreateRequest	true	"json"
-// @Success	201		{object}	ResponseError{data=model.Todo}
-// @Failure	400		{object}	ResponseError
-// @Failure	500		{object}	ResponseError
-// @Router		/todos [post]
+//	@Summary	Create a new todo
+//	@Tags		todos
+//	@Accept		json
+//	@Produce	json
+//	@Param		request	body		CreateRequest	true	"json"
+//	@Success	201		{object}	ResponseError{data=model.Todo}
+//	@Failure	400		{object}	ResponseError
+//	@Failure	500		{object}	ResponseError
+//	@Router		/todos [post]
 func (t *todoHandler) Create(c echo.Context) error {
 	var req CreateRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -49,7 +50,7 @@ func (t *todoHandler) Create(c echo.Context) error {
 			ResponseError{Errors: []Error{{Code: errors.CodeBadRequest, Message: err.Error()}}})
 	}
 
-	todo, err := t.service.Create(req.Task)
+	todo, err := t.service.Create(req.Task, req.Priority)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			ResponseError{Errors: []Error{{Code: errors.CodeInternalServerError, Message: err.Error()}}})
@@ -75,16 +76,16 @@ type UpdateRequestPath struct {
 	ID int `param:"id" validate:"required"`
 }
 
-// @Summary	Update a todo
-// @Tags		todos
-// @Accept		json
-// @Produce	json
-// @Param		body	body		UpdateRequestBody	true	"body"
-// @Param		path	path		UpdateRequestPath	false	"path"
-// @Success	201		{object}	ResponseData{Data=model.Todo}
-// @Failure	400		{object}	ResponseError
-// @Failure	500		{object}	ResponseError
-// @Router		/todos/:id [put]
+//	@Summary	Update a todo
+//	@Tags		todos
+//	@Accept		json
+//	@Produce	json
+//	@Param		body	body		UpdateRequestBody	true	"body"
+//	@Param		path	path		UpdateRequestPath	false	"path"
+//	@Success	201		{object}	ResponseData{Data=model.Todo}
+//	@Failure	400		{object}	ResponseError
+//	@Failure	500		{object}	ResponseError
+//	@Router		/todos/:id [put]
 func (t *todoHandler) Update(c echo.Context) error {
 	var req UpdateRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -110,14 +111,14 @@ type DeleteRequest struct {
 	ID int `param:"id" validate:"required"`
 }
 
-// @Summary	Delete a todo
-// @Tags		todos
-// @Param		path	path	DeleteRequest	false	"path"
-// @Success	204
-// @Failure	400	{object}	ResponseError
-// @Failure	404	{object}	ResponseError
-// @Failure	500	{object}	ResponseError
-// @Router		/todos/:id [delete]
+//	@Summary	Delete a todo
+//	@Tags		todos
+//	@Param		path	path	DeleteRequest	false	"path"
+//	@Success	204
+//	@Failure	400	{object}	ResponseError
+//	@Failure	404	{object}	ResponseError
+//	@Failure	500	{object}	ResponseError
+//	@Router		/todos/:id [delete]
 func (t *todoHandler) Delete(c echo.Context) error {
 	var req DeleteRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -141,14 +142,14 @@ type FindRequest struct {
 	ID int `param:"id" validate:"required"`
 }
 
-// @Summary	Find a todo
-// @Tags		todos
-// @Param		path	path		FindRequest	false	"path"
-// @Success	200		{object}	ResponseData{Data=model.Todo}
-// @Failure	400		{object}	ResponseError
-// @Failure	404		{object}	ResponseError
-// @Failure	500		{object}	ResponseError
-// @Router		/todos/:id [get]
+//	@Summary	Find a todo
+//	@Tags		todos
+//	@Param		path	path		FindRequest	false	"path"
+//	@Success	200		{object}	ResponseData{Data=model.Todo}
+//	@Failure	400		{object}	ResponseError
+//	@Failure	404		{object}	ResponseError
+//	@Failure	500		{object}	ResponseError
+//	@Router		/todos/:id [get]
 func (t *todoHandler) Find(c echo.Context) error {
 	var req FindRequest
 	if err := t.MustBind(c, &req); err != nil {
@@ -168,13 +169,20 @@ func (t *todoHandler) Find(c echo.Context) error {
 	return c.JSON(http.StatusOK, ResponseData{Data: res})
 }
 
-// @Summary	Find all todos
-// @Tags		todos
-// @Success	200	{object}	ResponseData{Data=[]model.Todo}
-// @Failure	500	{object}	ResponseError
-// @Router		/todos [get]
+//	@Summary	Find all todos
+//	@Tags		todos
+//	@Param		task		query		string	false	"Filter todos by task content"
+//	@Param		status		query		string	false	"Filter todos by status (created or done)"
+//	@Param		priority	query		string	false	"Filter todos by priority (high or low)"
+//	@Success	200			{object}	ResponseData{Data=[]model.Todo}
+//	@Failure	500			{object}	ResponseError
+//	@Router		/todos [get]
 func (t *todoHandler) FindAll(c echo.Context) error {
-	res, err := t.service.FindAll()
+	task := c.QueryParam("task")
+	status := c.QueryParam("status")
+	priority := c.QueryParam("priority")
+
+	res, err := t.service.FindAll(task, status, priority)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError,
 			ResponseError{Errors: []Error{{Code: errors.CodeInternalServerError, Message: err.Error()}}})
